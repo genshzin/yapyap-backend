@@ -1,1 +1,46 @@
-# 
+version: '3.8'
+
+services:
+  # MongoDB Database Container
+  mongo:
+    image: mongo:latest
+    container_name: yapyap-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=yapyap_dev
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - yapyap-network
+    restart: unless-stopped
+
+  # Node.js API Server Container  
+  api-server:
+    build: .
+    container_name: yapyap-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongo:27017/yapyap_dev
+      - PORT=3000
+    depends_on:
+      - mongo
+    networks:
+      - yapyap-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    command: npm run dev
+
+# Custom Network
+networks:
+  yapyap-network:
+    driver: bridge
+
+# Persistent Volume for MongoDB
+volumes:
+  mongo-data:
+    driver: local
