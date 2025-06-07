@@ -1,59 +1,63 @@
-const validateRegister = (req, res, next) => {
-    const { username, email, password } = req.body;
-    const errors = [];
+const { body, validationResult } = require('express-validator');
 
-    // Username validation
-    if (!username) errors.push('Username wajib diisi');
-    else if (username.length < 3) errors.push('Username minimal 3 karakter');
-    else if (username.length > 30) errors.push('Username maksimal 30 karakter');
-    else if (!/^[a-zA-Z0-9_]+$/.test(username)) errors.push('Username hanya boleh huruf, angka, underscore');
+// Validation rules untuk register
+const validateRegisterRules = [
+    body('username')
+        .notEmpty()
+        .withMessage('Username wajib diisi')
+        .isLength({ min: 3 })
+        .withMessage('Username minimal 3 karakter')
+        .isLength({ max: 30 })
+        .withMessage('Username maksimal 30 karakter')
+        .matches(/^[a-zA-Z0-9_]+$/)
+        .withMessage('Username hanya boleh huruf, angka, underscore'),
+    
+    body('email')
+        .notEmpty()
+        .withMessage('Email wajib diisi')
+        .isEmail()
+        .withMessage('Format email tidak valid'),
+    
+    body('password')
+        .notEmpty()
+        .withMessage('Password wajib diisi')
+        .isLength({ min: 6 })
+        .withMessage('Password minimal 6 karakter')
+        .matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+        .withMessage('Password harus mengandung huruf besar, kecil, dan angka')
+];
 
-    // Email validation
-    if (!email) errors.push('Email wajib diisi');
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Format email tidak valid');
+// Validation rules untuk login
+const validateLoginRules = [
+    body('email')
+        .notEmpty()
+        .withMessage('Email wajib diisi')
+        .isEmail()
+        .withMessage('Format email tidak valid'),
+    
+    body('password')
+        .notEmpty()
+        .withMessage('Password wajib diisi')
+        .isLength({ min: 6 })
+        .withMessage('Password minimal 6 karakter')
+];
 
-    // Password validation
-    if (!password) errors.push('Password wajib diisi');
-    else if (password.length < 6) errors.push('Password minimal 6 karakter');
-    else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-        errors.push('Password harus mengandung huruf besar, kecil, dan angka');
-    }
-
-    if (errors.length > 0) {
+// Middleware untuk handle validation errors
+const handleValidationErrors = (req, res, next) => {
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
         return res.status(400).json({
             success: false,
             message: 'Validasi gagal',
-            errors
+            errors: errors.array().map(error => error.msg)
         });
     }
-
-    next();
-};
-
-const validateLogin = (req, res, next) => {
-    const { email, password } = req.body;
-    const errors = [];
-
-    // Email validation
-    if (!email) errors.push('Email wajib diisi');
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Format email tidak valid');
-
-    // Password validation
-    if (!password) errors.push('Password wajib diisi');
-    else if (password.length < 6) errors.push('Password minimal 6 karakter');
-
-    if (errors.length > 0) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validasi gagal',
-            errors
-        });
-    }
-
+    
     next();
 };
 
 module.exports = {
-    validateRegister,
-    validateLogin
+    validateRegister: [...validateRegisterRules, handleValidationErrors],
+    validateLogin: [...validateLoginRules, handleValidationErrors]
 };

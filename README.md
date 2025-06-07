@@ -8,7 +8,9 @@ A Node.js backend API for the YapYap chat application, built with Express.js and
 - MongoDB database integration with Mongoose
 - Docker containerization
 - Development environment with hot reload
-- Authentication system (ready for implementation)
+- Complete authentication system with JWT
+- File upload functionality
+- Input validation and sanitization
 - Real-time chat functionality (ready for implementation)
 
 ## 📁 Project Structure
@@ -16,26 +18,28 @@ A Node.js backend API for the YapYap chat application, built with Express.js and
 ```
 yapyap-backend/
 ├── src/
-│   ├── app.js                 # Main application entry point
+│   ├── app.js                      # Main application entry point
 │   ├── config/
-│   │   └── index.js          # Configuration and database connection
+│   │   └── index.js               # Configuration and database connection
 │   ├── controllers/
-│   │   ├── authController.js # Authentication logic (pending)
-│   │   └── chatController.js # Chat functionality (pending)
+│   │   ├── authController.js      # Authentication logic
+│   │   └── chatController.js      # Chat functionality (pending)
 │   ├── middlewares/
-│   │   └── authMiddleware.js # Authentication middleware (pending)
+│   │   ├── authMiddleware.js      # Authentication middleware
+│   │   ├── uploadMiddleware.js    # File upload middleware
+│   │   └── validationMiddleware.js # Input validation middleware
 │   ├── models/
-│   │   ├── User.js          # User data model (pending)
-│   │   └── Message.js       # Message data model (pending)
+│   │   ├── User.js               # User data model
+│   │   └── Message.js            # Message data model (pending)
 │   ├── routes/
-│   │   ├── authRoutes.js    # Authentication routes (pending)
-│   │   └── chatRoutes.js    # Chat routes (pending)
+│   │   ├── authRoutes.js         # Authentication routes
+│   │   └── chatRoutes.js         # Chat routes (pending)
 │   └── utils/
-│       └── jwt.js           # JWT utilities (pending)
-├── docker-compose.yml        # Docker services configuration
-├── Dockerfile               # Container build instructions
-├── package.json             # Dependencies and scripts
-└── .env                     # Environment variables
+│       └── jwt.js                # JWT utilities
+├── docker-compose.yml             # Docker services configuration
+├── Dockerfile                    # Container build instructions
+├── package.json                  # Dependencies and scripts
+└── .env                         # Environment variables
 ```
 
 ## 🛠 Prerequisites
@@ -103,10 +107,12 @@ yapyap-backend/
 - `GET /` - API status and basic information
 - `GET /health` - Health check with database connection status
 
-### Authentication (Coming Soon)
+### Authentication
 - `POST /auth/register` - User registration
 - `POST /auth/login` - User login
 - `POST /auth/logout` - User logout
+- `GET /auth/profile` - Get user profile (protected)
+- `PUT /auth/profile` - Update user profile (protected)
 
 ### Chat (Coming Soon)
 - `GET /chat/messages` - Retrieve chat messages
@@ -144,23 +150,33 @@ Configuration is handled in [`src/config/index.js`](src/config/index.js), which 
 - `mongoose` - MongoDB object modeling
 - `dotenv` - Environment variable loader
 - `mongodb` - MongoDB driver
+- `bcryptjs` - Password hashing
+- `jsonwebtoken` - JWT token management
+- `multer` - File upload handling
+- `express-validator` - Input validation
+
 
 ### Development Dependencies
 - `nodemon` - Development server with hot reload
 
 ## 🚧 Development Status
 
-This project is currently in development. The following components are ready for implementation:
+This project is currently in development. The following components have been implemented:
 
 - ✅ Basic server setup
 - ✅ MongoDB connection
 - ✅ Docker configuration
 - ✅ Development environment
-- ⏳ User authentication system
+- ✅ User authentication system
+- ✅ JWT token management
+- ✅ User data models
+- ✅ Authentication routes
+- ✅ Authentication middleware
+- ✅ File upload middleware
+- ✅ Input validation middleware
 - ⏳ Chat functionality
-- ⏳ JWT token management
-- ⏳ API routes implementation
-- ⏳ Data models
+- ⏳ Message data models
+- ⏳ Chat routes implementation
+- ⏳ Real-time messaging with Socket.io
 
-
-**Note**: This project is currently in active development. Many features are planned but not yet implemented. Check the project structure comments for current implementation status.
+**Note**: This project has complete authentication functionality implemented including user registration, login, profile management, and security features. Chat features and real-time messaging are currently in development. Check the individual files for current implementation details.
