@@ -29,10 +29,11 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Import and use your routes (once you implement them)
-// const authRoutes = require('./routes/authRoutes');
+
+const authRoutes = require('./routes/authRoutes');
 // const chatRoutes = require('./routes/chatRoutes');
-// app.use('/auth', authRoutes);
+
+app.use('/auth', authRoutes);
 // app.use('/chat', chatRoutes);
 
 // Start server

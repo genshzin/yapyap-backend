@@ -8,7 +8,9 @@ const config = {
     env: process.env.NODE_ENV || 'development',
     mongodb: {
         uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/yapyap_dev',
-    }
+    },
+    jwtSecret: process.env.JWT_SECRET || 'yapyap_secret',
+    jwtExpire: process.env.JWT_EXPIRATION || '24h',
 };
 
 // MongoDB connection function
