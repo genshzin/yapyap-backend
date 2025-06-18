@@ -31,7 +31,7 @@ services:
       - yapyap-network
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - /usr/src/app/node_modules  # Ini yang penting - exclude node_modules
     restart: unless-stopped
     command: npm run dev
 

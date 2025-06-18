@@ -1,7 +1,19 @@
 const express = require('express');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 const { config, connectDB } = require('./config');
 
 const app = express();
+const server = createServer(app);
+
+// Setup Socket.IO with CORS
+const io = new Server(server, {
+  cors: {
+    origin: "*", // For development only
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
 
 // Connect to MongoDB
 connectDB();
@@ -29,13 +41,21 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Import and use your routes (once you implement them)
-// const authRoutes = require('./routes/authRoutes');
-// const chatRoutes = require('./routes/chatRoutes');
-// app.use('/auth', authRoutes);
-// app.use('/chat', chatRoutes);
+// Routes
+const authRoutes = require('./routes/authRoutes');
+const usersRoutes = require('./routes/users');
+const chatRoutes = require('./routes/chatRoutes');
 
-// Start server
-app.listen(config.port, '0.0.0.0', () => {
+app.use('/auth', authRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/chat', chatRoutes);
+
+// Initialize WebSocket
+const { initializeSocket } = require('./socket/socketHandler');
+initializeSocket(io);
+
+// Start server (change from app.listen to server.listen)
+server.listen(config.port, '0.0.0.0', () => {
     console.log(`Server running on port ${config.port} in ${config.env} mode`);
+    console.log(`WebSocket server ready at ws://localhost:${config.port}`);
 });
