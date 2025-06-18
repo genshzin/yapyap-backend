@@ -2,22 +2,17 @@
 
 A Node.js backend API for the YapYap chat application, built with Express.js, MongoDB, and Socket.IO for real-time communication.
 
-## 🚀 Features
+## Features
+- Complete authentication system with registration, login, and profile management
+- Real-time chat with direct messaging
+- User search and discovery
+- Message history with pagination
+- Read receipts and typing indicators
+- Online/offline status tracking
+- Secure WebSocket connections with JWT authentication
+- RESTful API for all chat operations
 
-- RESTful API with Express.js
-- MongoDB database integration with Mongoose
-- Real-time messaging with Socket.IO
-- Docker containerization
-- Development environment with hot reload
-- Complete authentication system with JWT
-- File upload functionality
-- Input validation and sanitization
-- User search functionality
-- Chat rooms and direct messaging
-- Message read receipts and typing indicators
-- Online status tracking
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 yapyap-backend/
@@ -51,15 +46,15 @@ yapyap-backend/
 └── .env                         # Environment variables
 ```
 
-## 🛠 Prerequisites
+## Prerequisites
 
 - Node.js (v18 or higher)
 - Docker and Docker Compose
 - MongoDB (if running locally without Docker)
 
-## 🚀 Quick Start
+## Quick Start
 
-### Using Docker (Recommended)
+### Using Docker
 
 1. **Clone the repository**
    ```bash
@@ -82,36 +77,13 @@ yapyap-backend/
    curl http://localhost:3000
    ```
 
-### Local Development
-
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-3. **Start MongoDB** (if not using Docker)
-   ```bash
-   mongod
-   ```
-
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-## 📝 Available Scripts
+## Available Scripts
 
 - `npm start` - Start the production server
 - `npm run dev` - Start the development server with hot reload (nodemon)
 - `npm test` - Run tests (not implemented yet)
 
-## 🌐 API Endpoints
+## API Endpoints
 
 ### Health Check
 - `GET /` - API status and basic information
@@ -136,7 +108,7 @@ yapyap-backend/
 - `PATCH /chat/messages/:messageId` - Edit a message (protected)
 - `DELETE /chat/messages/:messageId` - Delete a message (protected)
 
-## 🔌 Socket.IO Events
+## Socket.IO Events
 
 ### Client to Server Events
 - `join_chats` - Join all user's chat rooms
@@ -162,7 +134,7 @@ yapyap-backend/
 - `chats_joined` - Confirmation of joining chats
 - `error` - Error notifications
 
-## 🐳 Docker Configuration
+## Docker Configuration
 
 The application uses Docker Compose with two services:
 
@@ -177,7 +149,7 @@ The application uses Docker Compose with two services:
 | `NODE_ENV` | Environment mode | `development` |
 | `MONGODB_URI` | MongoDB connection string | `mongodb://mongo:27017/yapyap_dev` |
 
-## 🔧 Configuration
+## Configuration
 
 Configuration is handled in [`src/config/index.js`](src/config/index.js), which includes:
 
@@ -186,7 +158,7 @@ Configuration is handled in [`src/config/index.js`](src/config/index.js), which 
 - MongoDB connection setup
 - Database connection function
 
-## 📦 Dependencies
+## Dependencies
 
 ### Production Dependencies
 - `express` - Web framework
@@ -202,38 +174,3 @@ Configuration is handled in [`src/config/index.js`](src/config/index.js), which 
 
 ### Development Dependencies
 - `nodemon` - Development server with hot reload
-
-## 🚧 Development Status
-
-This project is **production-ready** with complete chat functionality. All core features have been implemented:
-
-- ✅ Basic server setup
-- ✅ MongoDB connection
-- ✅ Docker configuration
-- ✅ Development environment
-- ✅ User authentication system
-- ✅ JWT token management
-- ✅ User data models
-- ✅ Authentication routes
-- ✅ Authentication middleware
-- ✅ File upload middleware
-- ✅ Input validation middleware
-- ✅ Chat functionality
-- ✅ Message data models
-- ✅ Chat routes implementation
-- ✅ Real-time messaging with Socket.io
-- ✅ User search functionality
-- ✅ Online status tracking
-- ✅ Typing indicators
-- ✅ Message read receipts
-- ✅ WebSocket authentication
-
-**Current Features:**
-- Complete authentication system with registration, login, and profile management
-- Real-time chat with direct messaging
-- User search and discovery
-- Message history with pagination
-- Read receipts and typing indicators
-- Online/offline status tracking
-- Secure WebSocket connections with JWT authentication
-- RESTful API for all chat operations
