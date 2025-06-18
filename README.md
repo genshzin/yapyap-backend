@@ -1,39 +1,43 @@
 # YapYap Backend API
 
-A Node.js backend API for the YapYap chat application, built with Express.js and MongoDB.
+A Node.js backend API for the YapYap chat application, built with Express.js, MongoDB, and Socket.IO for real-time communication.
 
-## 🚀 Features
+## Features
+- Complete authentication system with registration, login, and profile management
+- Real-time chat with direct messaging
+- User search and discovery
+- Message history with pagination
+- Read receipts and typing indicators
+- Online/offline status tracking
+- Secure WebSocket connections with JWT authentication
+- RESTful API for all chat operations
 
-- RESTful API with Express.js
-- MongoDB database integration with Mongoose
-- Docker containerization
-- Development environment with hot reload
-- Complete authentication system with JWT
-- File upload functionality
-- Input validation and sanitization
-- Real-time chat functionality (ready for implementation)
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 yapyap-backend/
 ├── src/
-│   ├── app.js                      # Main application entry point
+│   ├── app.js                      # Main application entry point with Socket.IO
 │   ├── config/
 │   │   └── index.js               # Configuration and database connection
 │   ├── controllers/
 │   │   ├── authController.js      # Authentication logic
-│   │   └── chatController.js      # Chat functionality (pending)
+│   │   └── chatController.js      # Chat functionality
 │   ├── middlewares/
 │   │   ├── authMiddleware.js      # Authentication middleware
 │   │   ├── uploadMiddleware.js    # File upload middleware
-│   │   └── validationMiddleware.js # Input validation middleware
+│   │   ├── validationMiddleware.js # Input validation middleware
+│   │   └── socketMiddleware.js    # Socket.IO authentication
 │   ├── models/
 │   │   ├── User.js               # User data model
-│   │   └── Message.js            # Message data model (pending)
+│   │   ├── Chat.js               # Chat room data model
+│   │   └── Message.js            # Message data model
 │   ├── routes/
 │   │   ├── authRoutes.js         # Authentication routes
-│   │   └── chatRoutes.js         # Chat routes (pending)
+│   │   ├── chatRoutes.js         # Chat REST API routes
+│   │   └── users.js              # User search routes
+│   ├── socket/
+│   │   └── socketHandler.js      # WebSocket event handlers
 │   └── utils/
 │       └── jwt.js                # JWT utilities
 ├── docker-compose.yml             # Docker services configuration
@@ -42,15 +46,15 @@ yapyap-backend/
 └── .env                         # Environment variables
 ```
 
-## 🛠 Prerequisites
+## Prerequisites
 
 - Node.js (v18 or higher)
 - Docker and Docker Compose
 - MongoDB (if running locally without Docker)
 
-## 🚀 Quick Start
+## Quick Start
 
-### Using Docker (Recommended)
+### Using Docker
 
 1. **Clone the repository**
    ```bash
@@ -66,42 +70,20 @@ yapyap-backend/
    This will start:
    - MongoDB container on port `27017`
    - API server on port `3000`
+   - WebSocket server on port `3000`
 
 3. **Verify the application is running**
    ```bash
    curl http://localhost:3000
    ```
 
-### Local Development
-
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-3. **Start MongoDB** (if not using Docker)
-   ```bash
-   mongod
-   ```
-
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-## 📝 Available Scripts
+## Available Scripts
 
 - `npm start` - Start the production server
 - `npm run dev` - Start the development server with hot reload (nodemon)
 - `npm test` - Run tests (not implemented yet)
 
-## 🌐 API Endpoints
+## API Endpoints
 
 ### Health Check
 - `GET /` - API status and basic information
@@ -114,12 +96,45 @@ yapyap-backend/
 - `GET /auth/profile` - Get user profile (protected)
 - `PUT /auth/profile` - Update user profile (protected)
 
-### Chat (Coming Soon)
-- `GET /chat/messages` - Retrieve chat messages
-- `POST /chat/messages` - Send a new message
-- `GET /chat/rooms` - Get chat rooms
+### User Management
+- `GET /api/users/search` - Search users by username or email (protected)
 
-## 🐳 Docker Configuration
+### Chat API
+- `GET /chat/rooms` - Get user's chat rooms with unread counts (protected)
+- `POST /chat/rooms` - Create or get existing direct chat (protected)
+- `GET /chat/messages?chatId=<id>&page=<num>&limit=<num>` - Get chat messages with pagination (protected)
+- `POST /chat/messages` - Send a new message (protected)
+- `PATCH /chat/messages/read` - Mark messages as read (protected)
+- `PATCH /chat/messages/:messageId` - Edit a message (protected)
+- `DELETE /chat/messages/:messageId` - Delete a message (protected)
+
+## Socket.IO Events
+
+### Client to Server Events
+- `join_chats` - Join all user's chat rooms
+- `send_message` - Send a real-time message
+  ```json
+  {
+    "chatId": "chat_id",
+    "content": "message content",
+    "type": "text"
+  }
+  ```
+- `typing_start` - Notify others that user is typing
+- `typing_stop` - Notify others that user stopped typing
+- `mark_read` - Mark messages as read in real-time
+
+### Server to Client Events
+- `new_message` - Receive new messages
+- `user_typing` - Someone started typing
+- `user_stop_typing` - Someone stopped typing
+- `messages_read` - Messages were read by someone
+- `user_status_change` - User online/offline status changed
+- `online_count` - Current online users count
+- `chats_joined` - Confirmation of joining chats
+- `error` - Error notifications
+
+## Docker Configuration
 
 The application uses Docker Compose with two services:
 
@@ -134,7 +149,7 @@ The application uses Docker Compose with two services:
 | `NODE_ENV` | Environment mode | `development` |
 | `MONGODB_URI` | MongoDB connection string | `mongodb://mongo:27017/yapyap_dev` |
 
-## 🔧 Configuration
+## Configuration
 
 Configuration is handled in [`src/config/index.js`](src/config/index.js), which includes:
 
@@ -143,11 +158,12 @@ Configuration is handled in [`src/config/index.js`](src/config/index.js), which 
 - MongoDB connection setup
 - Database connection function
 
-## 📦 Dependencies
+## Dependencies
 
 ### Production Dependencies
 - `express` - Web framework
 - `mongoose` - MongoDB object modeling
+- `socket.io` - Real-time bidirectional communication
 - `dotenv` - Environment variable loader
 - `mongodb` - MongoDB driver
 - `bcryptjs` - Password hashing
@@ -158,25 +174,3 @@ Configuration is handled in [`src/config/index.js`](src/config/index.js), which 
 
 ### Development Dependencies
 - `nodemon` - Development server with hot reload
-
-## 🚧 Development Status
-
-This project is currently in development. The following components have been implemented:
-
-- ✅ Basic server setup
-- ✅ MongoDB connection
-- ✅ Docker configuration
-- ✅ Development environment
-- ✅ User authentication system
-- ✅ JWT token management
-- ✅ User data models
-- ✅ Authentication routes
-- ✅ Authentication middleware
-- ✅ File upload middleware
-- ✅ Input validation middleware
-- ⏳ Chat functionality
-- ⏳ Message data models
-- ⏳ Chat routes implementation
-- ⏳ Real-time messaging with Socket.io
-
-**Note**: This project has complete authentication functionality implemented including user registration, login, profile management, and security features. Chat features and real-time messaging are currently in development. Check the individual files for current implementation details.
