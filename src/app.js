@@ -31,10 +31,12 @@ app.get('/health', (req, res) => {
 
 
 const authRoutes = require('./routes/authRoutes');
-// const chatRoutes = require('./routes/chatRoutes');
+const usersRoutes = require('./routes/users');
+const chatRoutes = require('./routes/chatRoutes');
 
 app.use('/auth', authRoutes);
-// app.use('/chat', chatRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/chat', chatRoutes);
 
 // Start server
 app.listen(config.port, '0.0.0.0', () => {
