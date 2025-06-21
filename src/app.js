@@ -2,6 +2,7 @@ const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const { config, connectDB } = require('./config');
+const cors = require('cors');
 
 const app = express();
 const server = createServer(app);
@@ -21,6 +22,21 @@ connectDB();
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || origin.startsWith('http://localhost')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+}));
+
+
 
 // Basic route to test if server is working
 app.get('/', (req, res) => {
