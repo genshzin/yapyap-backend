@@ -41,7 +41,13 @@ const messageSchema = new mongoose.Schema({
   replyTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message'
-  }
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  deletedAt: Date,
+  originalContent: String 
 }, {
   timestamps: true
 });

@@ -61,10 +61,13 @@ app.get('/health', (req, res) => {
 const authRoutes = require('./routes/authRoutes');
 const usersRoutes = require('./routes/users');
 const chatRoutes = require('./routes/chatRoutes');
+const friendshipRoutes = require('./routes/friendshipRoutes');
 
 app.use('/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/chat', chatRoutes);
+app.use('/friendships', friendshipRoutes);
+
 
 // Initialize WebSocket
 const { initializeSocket } = require('./socket/socketHandler');

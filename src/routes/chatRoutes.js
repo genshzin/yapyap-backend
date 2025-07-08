@@ -1,5 +1,5 @@
 const express = require('express');
-const { authenticateToken } = require('../middlewares/authMiddleware'); // ← Fix import
+const { authenticateToken } = require('../middlewares/authMiddleware');
 const {
   getUserChats,
   createOrGetChat,

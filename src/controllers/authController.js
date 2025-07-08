@@ -37,8 +37,14 @@ const register = async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'User berhasil didaftarkan',
-            user: newUser
+            user: {
+                ...newUser.toJSON(),
+                profilePictureUrl: newUser.profilePicture && newUser.profilePicture.data
+                    ? `${req.protocol}://${req.get('host')}/api/users/${newUser._id}/profile-picture`
+                    : null
+            }
         });
+
 
     } catch (error) {
         console.error('Register error:', error);
@@ -86,10 +92,12 @@ const login = async (req, res) => {
                 id: user._id,
                 username: user.username,
                 email: user.email,
-                profilePicture: user.profilePicture,
                 isOnline: user.isOnline,
-                lastSeen: user.lastSeen
-            }
+                lastSeen: user.lastSeen,
+                profilePictureUrl: user.profilePicture && user.profilePicture.data
+                    ? `${req.protocol}://${req.get('host')}/api/users/${user._id}/profile-picture`
+                    : null
+                    }
         });
 
     } catch (error) {

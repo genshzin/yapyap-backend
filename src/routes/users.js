@@ -47,4 +47,37 @@ router.get('/search', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/:id/profile-picture', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || !user.profilePicture || !user.profilePicture.data) {
+      return res.status(404).send('No profile picture');
+    }
+    res.set('Content-Type', user.profilePicture.contentType || 'image/jpeg');
+    res.send(user.profilePicture.data);
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
+});
+
+// Get user profile endpoint
+router.get('/:id/profile', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .select('username email avatar createdAt');
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Add profile picture URL to the response
+    const profileData = user.toObject();
+    profileData.profilePictureUrl = `/api/users/${user._id}/profile-picture`;
+    
+    res.json(profileData);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
