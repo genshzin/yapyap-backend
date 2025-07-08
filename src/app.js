@@ -73,7 +73,6 @@ app.use('/friendships', friendshipRoutes);
 const { initializeSocket } = require('./socket/socketHandler');
 initializeSocket(io);
 
-// Start server (change from app.listen to server.listen)
 server.listen(config.port, '0.0.0.0', () => {
     console.log(`Server running on port ${config.port} in ${config.env} mode`);
     console.log(`WebSocket server ready at ws://localhost:${config.port}`);

@@ -88,36 +88,26 @@ const declineRequest = async function(req, res){
 
 const deleteFriendship = async function(req, res){
     const userId = req.user.id;
-    const friendId = req.params.friendId; // Get friendId from URL parameters instead of body
-
-    console.log(`Attempting to delete friendship: userId=${userId}, friendId=${friendId}`);
+    const friendId = req.params.friendId; 
 
     if (!friendId) {
         return res.status(400).json({ error: 'Friend ID is required' });
     }
 
     try {
-        // The issue could be here - we're looking for a friendship with the friendshipId
-        // but we might be passing a userId instead
-        console.log(`Looking for friendship with id: ${friendId}`);
         
-        // Option 1: If friendId is actually the friendship ID
         const friendshipById = await Friendship.findById(friendId);
         
         if (friendshipById) {
-            // Make sure the current user is part of this friendship
             if (friendshipById.requester.toString() === userId || 
                 friendshipById.recipient.toString() === userId) {
                 await Friendship.findByIdAndDelete(friendId);
-                console.log(`Friendship ${friendId} deleted successfully`);
                 return res.status(200).json({ message: 'Friendship deleted successfully' });
             } else {
-                console.log(`User ${userId} is not part of friendship ${friendId}`);
                 return res.status(403).json({ error: 'You are not authorized to delete this friendship' });
             }
         }
         
-        // Option 2: If friendId is actually the friend's user ID
         const friendshipByUsers = await Friendship.findOneAndDelete({
             $or: [
                 { requester: userId, recipient: friendId, status: 'accepted' },
@@ -126,14 +116,11 @@ const deleteFriendship = async function(req, res){
         });
 
         if (friendshipByUsers) {
-            console.log(`Friendship between ${userId} and ${friendId} deleted successfully`);
             return res.status(200).json({ message: 'Friendship deleted successfully' });
         }
 
-        console.log(`No friendship found for deletion`);
         return res.status(404).json({ error: 'Friendship not found' });
     } catch (error) {
-        console.error(`Error deleting friendship: ${error}`);
         res.status(500).json({ error: 'Server error' });
     }
 }
@@ -149,17 +136,14 @@ const listFriends = async function(req, res) {
             ]
         }).populate('requester recipient', 'username email profilePicture');
 
-        // Add profile picture URL for each user
         const friendshipsWithUrls = friendships.map(friendship => {
             const friendshipObj = friendship.toObject();
             
-            // Add profilePictureUrl for requester
             if (friendshipObj.requester && friendshipObj.requester.profilePicture && friendshipObj.requester.profilePicture.data) {
                 friendshipObj.requester.profilePictureUrl = `${req.protocol}://${req.get('host')}/api/users/${friendshipObj.requester._id}/profile-picture`;
                 delete friendshipObj.requester.profilePicture;
             }
             
-            // Add profilePictureUrl for recipient
             if (friendshipObj.recipient && friendshipObj.recipient.profilePicture && friendshipObj.recipient.profilePicture.data) {
                 friendshipObj.recipient.profilePictureUrl = `${req.protocol}://${req.get('host')}/api/users/${friendshipObj.recipient._id}/profile-picture`;
                 delete friendshipObj.recipient.profilePicture;
@@ -170,7 +154,6 @@ const listFriends = async function(req, res) {
 
         res.status(200).json(friendshipsWithUrls);
     } catch (error) {
-        console.error('Error fetching friends:', error);
         res.status(500).json({ error: 'Server error' });
     }
 }
@@ -184,11 +167,9 @@ const listRequests = async function(req, res) {
             status: 'pending'
         }).populate('requester', 'username email profilePicture');
 
-        // Add profile picture URL for each requester
         const requestsWithUrls = requests.map(request => {
             const requestObj = request.toObject();
             
-            // Add profilePictureUrl for requester if they have a profile picture
             if (requestObj.requester && requestObj.requester.profilePicture && requestObj.requester.profilePicture.data) {
                 requestObj.requester.profilePictureUrl = `${req.protocol}://${req.get('host')}/api/users/${requestObj.requester._id}/profile-picture`;
                 delete requestObj.requester.profilePicture;
@@ -197,10 +178,8 @@ const listRequests = async function(req, res) {
             return requestObj;
         });
 
-        console.log('Friend requests with profile pictures:', requestsWithUrls);
         res.status(200).json(requestsWithUrls);
     } catch (error) {
-        console.error('Error fetching friend requests:', error);
         res.status(500).json({ error: 'Server error' });
     }
 };

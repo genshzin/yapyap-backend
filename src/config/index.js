@@ -4,13 +4,13 @@ const mongoose = require('mongoose');
 dotenv.config();
 
 const config = {
-    port: process.env.PORT || 3000,
-    env: process.env.NODE_ENV || 'development',
+    port: process.env.PORT,
+    env: process.env.NODE_ENV,
     mongodb: {
-        uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/yapyap_dev',
+        uri: process.env.MONGODB_URI,
     },
-    jwtSecret: process.env.JWT_SECRET || 'yapyap_secret',
-    jwtExpire: process.env.JWT_EXPIRATION || '24h',
+    jwtSecret: process.env.JWT_SECRET,
+    jwtExpire: process.env.JWT_EXPIRATION,
 };
 
 // MongoDB connection function

@@ -3,7 +3,7 @@ const User = require('../models/User');
 const { authenticateToken } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-// Search users endpoint
+
 router.get('/search', authenticateToken, async (req, res) => {
   try {
     const { q, page = 1, limit = 10 } = req.query;
@@ -16,7 +16,7 @@ router.get('/search', authenticateToken, async (req, res) => {
 
     const searchQuery = {
       $and: [
-        { _id: { $ne: req.user.id } }, // Exclude current user
+        { _id: { $ne: req.user.id } }, 
         {
           $or: [
             { username: { $regex: q, $options: 'i' } },
@@ -27,7 +27,7 @@ router.get('/search', authenticateToken, async (req, res) => {
     };
 
     const users = await User.find(searchQuery)
-      .select('username email avatar createdAt') // Only return safe fields
+      .select('username email avatar createdAt') 
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .sort({ username: 1 });
@@ -60,7 +60,7 @@ router.get('/:id/profile-picture', async (req, res) => {
   }
 });
 
-// Get user profile endpoint
+
 router.get('/:id/profile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
@@ -70,7 +70,7 @@ router.get('/:id/profile', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Add profile picture URL to the response
+    
     const profileData = user.toObject();
     profileData.profilePictureUrl = `/api/users/${user._id}/profile-picture`;
     

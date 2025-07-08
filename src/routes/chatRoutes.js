@@ -12,7 +12,6 @@ const {
 
 const router = express.Router();
 
-// Chat routes - ganti auth jadi authenticateToken
 router.get('/rooms', authenticateToken, getUserChats);
 router.post('/rooms', authenticateToken, createOrGetChat);
 router.get('/messages', authenticateToken, getChatMessages);
